@@ -1,0 +1,74 @@
+; IOAUTHORIZE32D.INF -- by Justin Johnson
+; Purpose: Provide setup information for the IOAUTHORIZE32 DAEMON kernel-mode driver.
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=System
+ClassGuid={4d36e97d-e325-11ce-bfc1-08002be10318}
+Provider=%DRIVER_PROVIDER%
+CatalogFile=ioauthorize32d.cat
+DriverVer=09/25/2022,1.0.0.0
+
+[DestinationDirs]
+DefaultDestDir=12
+IOAuthorize32_Daemon_Device_CoInstaller_CopyFiles=11
+
+[SourceDisksNames]
+1=%DISK_NAME%,,,""
+
+[SourceDisksFiles]
+ioauthorize32d.sys=1,,
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1
+
+; Device Installation Section
+
+[Manufacturer]
+%DRIVER_PROVIDER%=JustinJohnson,NTx86.5.1
+
+[JustinJohnson.NTx86.5.1]
+%IOAUTHORIZE32D.DEVICEDESC%=IOAuthorize32_Daemon_Device,Root\ioauthorize32d
+
+[IOAuthorize32_Daemon_Device.NT]
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+ioauthorize32d.sys
+
+; Service Installation Section
+
+[IOAuthorize32_Daemon_Device.NT.Services]
+AddService=IOAuthorize32D,%SPSVCINST_ASSOCSERVICE%,IOAuthorize32_Daemon_Service_Install
+
+[IOAuthorize32_Daemon_Service_Install]
+DisplayName=%IOAUTHORIZE32D.SVCDESC%
+ServiceType=1
+StartType=3
+ErrorControl=1
+ServiceBinary=%12%\ioauthorize32d.sys
+
+; Coinstaller Section
+
+[IOAuthorize32_Daemon_Device.NT.CoInstallers]
+AddReg=IOAuthorize32_Daemon_Device_CoInstaller_AddReg
+CopyFiles=IOAuthorize32_Daemon_Device_CoInstaller_CopyFiles
+
+[IOAuthorize32_Daemon_Device_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000,"WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[IOAuthorize32_Daemon_Device_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[IOAuthorize32_Daemon_Device.NT.Wdf]
+KmdfService=IOAuthorize32D,IOAuthorize32_Daemon_WdfSect
+
+[IOAuthorize32_Daemon_WdfSect]
+KmdfLibraryVersion=$KMDFVERSION$
+
+; Strings Section
+
+[Strings]
+SPSVCINST_ASSOCSERVICE=0x00000002
+DRIVER_PROVIDER="Justin Johnson"
+DISK_NAME="IOAuthorize32 Daemon Installation Disk"
+IOAUTHORITY32D.DEVICEDESC="IOAuthorize32 Daemon Device"
+IOAUTHORITY32D.SVCDESC="IOAuthorize32 Daemon Service"
